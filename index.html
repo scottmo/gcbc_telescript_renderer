@@ -1,0 +1,80 @@
+<html>
+<head>
+    <style>
+        em {
+            color: #AAA;
+        }
+        body {
+            background-color: #111;
+            color: #ccb781;
+        }
+        body * {
+            font-family: "DFKai-SB";
+            line-height: 1.2rem;
+            font-weight: bold;
+        }
+        strong {
+            color: #fff;
+        }
+        #zoom {
+            position: fixed;
+            right: 5px;
+            top: 5px;
+            background-color: #111;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
+    <script src="./scriptRendererInserts.js"></script>
+</head>
+<body>
+    <div id="zoom">
+        <b>Zoom</b>
+        <button id="zoomin">+</button>
+        <button id="zoomout">-</button>
+    </div>
+    <input id="input" type="file" />
+    <div id="output"></div>
+
+    <script>
+        function $(sel) {
+            return document.querySelector(sel);
+        }
+
+        const converter = new showdown.Converter();
+        const input = $("#input");
+        const output = $("#output");
+
+        let zoomLevel = 2;
+        output.style.zoom = zoomLevel;
+        $("#zoomin").addEventListener("click", () => {
+            output.style.zoom = ++zoomLevel;
+        });
+        $("#zoomout").addEventListener("click", () => {
+            output.style.zoom = --zoomLevel;
+        });
+
+        input.addEventListener("change",  async (e) => {
+            e.preventDefault();
+            const reader = new FileReader();
+            reader.onload = async (e) => { 
+                let text = (e.target.result);
+
+                if (text.includes("（")) {
+                    text = text.replaceAll("（", "_（");
+                }
+                if (text.includes("）")) {
+                    text = text.replaceAll("）", "）_");
+                }
+                text = text.replace(/\n\s*(.+?)：/g, "\n\n__$1__：");
+
+                inserts.forEach(({key, value}) => {
+                    text.replace(key, key + "\n\n" + value.split("\n").map(s => "> " + s).join("\n"));
+                });
+
+                output.innerHTML = converter.makeHtml(text);
+            };
+            reader.readAsText(e.target.files[0])
+        });
+    </script>
+</body>
+</html>
