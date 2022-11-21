@@ -1,42 +1,42 @@
 window.inserts = [
     {
         key: "崇拜宣召诗歌－－《祂是》",
-        value: "".
+        value: "",
     },
     {
         key: "诗歌－－《永恒的答问》",
-        value: "".
+        value: "",
     },
     {
         key: "诗歌－－《仅此一生》",
-        value: "".
+        value: "",
     },
     {
         key: "天使唱－－《有一位神》",
-        value: "".
+        value: "",
     },
     {
         key: "诗歌－－《天父的爱》",
-        value: "".
+        value: "",
     },
     {
         key: "诗歌－－《更高处》",
-        value: "".
+        value: "",
     },
     {
         key: "诗歌－－《Be Not Afraid》",
-        value: "".
+        value: "",
     },
     {
         key: "诗歌－－《永不与神的爱隔绝》",
-        value: "".
+        value: "",
     },
     {
         key: "诗歌－－《Prayer of Peace》",
-        value: "".
+        value: "",
     },
     {
         key: "诗歌－－《祢的名何等荣美》",
-        value: "".
+        value: "",
     },
 ];
