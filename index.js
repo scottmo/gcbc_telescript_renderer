@@ -30,7 +30,12 @@ input.addEventListener("change",  async (e) => {
         text = text.replace(/\n\s*(.+?)：/g, "\n\n__$1__：");
 
         inserts.forEach(({key, value}) => {
-            text = text.replace(key, key + "\n\n" + value.trim().split("\n").map(s => "> " + s).join("\n\n"));
+            text = text.replace(key, key + "\n\n" + value.trim().split("\n").map(s => {
+                if (s.trim() === "") {
+                    return "> --"; // separate verse
+                }
+                return "> " + s;
+            }).join("\n\n"));
         });
 
         output.innerHTML = converter.makeHtml(text);
