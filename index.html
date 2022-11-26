@@ -22,12 +22,6 @@
         p {
             margin: 0;
         }
-        #zoom {
-            position: fixed;
-            right: 5px;
-            top: 5px;
-            background-color: #111;
-        }
         .hidden {
             display: none;
         }
@@ -36,14 +30,16 @@
     <script src="./inserts.js"></script>
 </head>
 <body>
-    <div id="zoom">
+    <div>
+        <input id="input" type="file" />
+        &nbsp;|&nbsp;
         <b>Zoom</b>
         <button id="zoomin">+</button>
         <button id="zoomout">-</button>
+        &nbsp;|&nbsp;
         <label for="hideComments">Hide Comments</label>
         <input id="hideComments" type="checkbox" />
     </div>
-    <input id="input" type="file" />
     <div id="output">
         Instructions: convert telescript to text then upload here.
     </div>
