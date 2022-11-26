@@ -21,12 +21,13 @@ input.addEventListener("change",  async (e) => {
     reader.onload = async (e) => { 
         let text = (e.target.result);
 
-        if (text.includes("（")) {
-            text = text.replaceAll("（", "_（");
-        }
-        if (text.includes("）")) {
-            text = text.replaceAll("）", "）_");
-        }
+        // make comments color fade
+        text = text.replaceAll("（", "_（");
+        text = text.replaceAll("）", "）_");
+        text = text.replaceAll("【", "_【");
+        text = text.replaceAll("】", "】_");
+
+        // make character name stands out in beginning of dialogs
         text = text.replace(/\n\s*(.+?)：/g, "\n\n__$1__：");
 
         inserts.forEach(({key, value}) => {
