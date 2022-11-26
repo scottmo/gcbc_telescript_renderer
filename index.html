@@ -28,6 +28,9 @@
             top: 5px;
             background-color: #111;
         }
+        .hidden {
+            display: none;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
     <script src="./inserts.js"></script>
@@ -37,6 +40,8 @@
         <b>Zoom</b>
         <button id="zoomin">+</button>
         <button id="zoomout">-</button>
+        <label for="hideComments">Hide Comments</label>
+        <input id="hideComments" type="checkbox" />
     </div>
     <input id="input" type="file" />
     <div id="output">
