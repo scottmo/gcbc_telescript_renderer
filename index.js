@@ -1,6 +1,9 @@
 function $(sel) {
     return document.querySelector(sel);
 }
+function $$(sel) {
+    return document.querySelectorAll(sel);
+}
 
 const hideComments = $("#hideComments");
 
@@ -18,7 +21,13 @@ $("#zoomout").addEventListener("click", () => {
 });
 
 hideComments.addEventListener("change", async (e) => {
-    // TODO
+    const shouldHide = e.target.checked;
+    const comments = $$("em");
+    if (shouldHide) {
+        comments.forEach(el => elm.classList.add("hidden");
+    } else {
+        comments.forEach(el => elm.classList.remove("hidden");
+    }
 });
 
 input.addEventListener("change",  async (e) => {
