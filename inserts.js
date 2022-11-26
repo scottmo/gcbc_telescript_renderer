@@ -1,6 +1,6 @@
 window.inserts = [
     {
-        key: "崇拜宣召诗歌－－《祂是》",
+        key: "－－《祂是》",
         value: `
 祂是大衛的根
 祂是明亮晨星
@@ -42,7 +42,7 @@ window.inserts = [
 `,
     },
     {
-        key: "诗歌－－《永恒的答问》",
+        key: "－－《永恒的答问》",
         value: `
 在世上有多少歡笑
 能使你快樂永久
@@ -85,7 +85,7 @@ window.inserts = [
 `,
     },
     {
-        key: "诗歌－－《仅此一生》",
+        key: "－－《仅此一生》",
         value: `
 僅此一生 轉眼就過去
 爲主所作 永遠長存
@@ -120,7 +120,7 @@ window.inserts = [
 `,
     },
     {
-        key: "天使唱－－《有一位神》",
+        key: "－－《有一位神》",
         value: `
 有一位神
 有權能創造宇宙萬物
@@ -152,7 +152,7 @@ window.inserts = [
 `,
     },
     {
-        key: "诗歌－－《天父的爱》",
+        key: "－－《天父的爱》",
         value: `
 這古舊十字架
 顯明天父的愛
@@ -214,7 +214,7 @@ window.inserts = [
 `,
     },
     {
-        key: "诗歌－－《更高处》",
+        key: "－－《更高处》",
         value: `
 這上山路我努力跑
 一天一天越跑越高
@@ -257,7 +257,7 @@ window.inserts = [
 `,
     },
     {
-        key: "诗歌－－《Be Not Afraid》",
+        key: "－－《Be Not Afraid》",
         value: `
 Be not afraid:
 for I have redeemed you;
@@ -301,7 +301,7 @@ You are precious in my sight.
 `,
     },
     {
-        key: "诗歌－－《永不与神的爱隔绝》",
+        key: "－－《永不与神的爱隔绝》",
         value: `
 無論是生 哦 無論是死 
 是現在的事或將來的事 
@@ -365,7 +365,7 @@ You are precious in my sight.
 `,
     },
     {
-        key: "诗歌－－《Prayer of Peace》",
+        key: "－－《Prayer of Peace》",
         value: `
 Lord, make me an instrument,
 Lord, make me an instrument,
@@ -394,7 +394,7 @@ to eternal life.
 `,
     },
     {
-        key: "诗歌－－《祢的名何等荣美》",
+        key: "－－《祢的名何等荣美》",
         value: `
 When I gaze into the night skies
 and see the work of Your fingers;
