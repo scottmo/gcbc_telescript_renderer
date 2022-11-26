@@ -5,10 +5,7 @@ function $$(sel) {
     return document.querySelectorAll(sel);
 }
 
-const hideComments = $("#hideComments");
-
 const converter = new showdown.Converter();
-const input = $("#input");
 const output = $("#output");
 
 let zoomLevel = 2;
@@ -20,7 +17,7 @@ $("#zoomout").addEventListener("click", () => {
     output.style.zoom = --zoomLevel;
 });
 
-hideComments.addEventListener("change", async (e) => {
+$("#hideComments").addEventListener("change", async (e) => {
     const shouldHide = e.target.checked;
     const comments = $$("em");
     if (shouldHide) {
@@ -30,7 +27,17 @@ hideComments.addEventListener("change", async (e) => {
     }
 });
 
-input.addEventListener("change",  async (e) => {
+$("#backgroundColor").addEventListener("change", (e) => {
+    $("body").style.backgroundColor = e.target.value;
+});
+$("#foregroundColor").addEventListener("change", (e) => {
+    $("body").style.color = e.target.value;
+});
+$("#commentsColor").addEventListener("change", (e) => {
+    $$("em").forEach(elm => elm.style.color = e.target.value);
+});
+
+$("#input").addEventListener("change",  async (e) => {
     e.preventDefault();
     const reader = new FileReader();
     reader.onload = async (e) => { 

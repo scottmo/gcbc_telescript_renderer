@@ -22,6 +22,15 @@
         p {
             margin: 0;
         }
+        #toolbar {
+            background-color: #111;
+            position: fixed;
+            top: 5px;
+            width: 100%;
+        }
+        #output {
+            margin-top: 2rem;
+        }
         .hidden {
             display: none;
         }
@@ -30,7 +39,7 @@
     <script src="./inserts.js"></script>
 </head>
 <body>
-    <div>
+    <div id="toolbar">
         <input id="input" type="file" />
         &nbsp;|&nbsp;
         <b>Zoom</b>
@@ -39,6 +48,13 @@
         &nbsp;|&nbsp;
         <label for="hideComments">Hide Comments</label>
         <input id="hideComments" type="checkbox" />
+        <br/>
+        <label for="backgroundColor">background</label>
+        <input type="color" id='backgroundColor' value="#111" />
+        <label for="foregroundColor">foreground</label>
+        <input type="color" id='foregroundColor' value="#ccb781" />
+        <label for="commentsColor">comments</label>
+        <input type="color" id='commentsColor' value="#AAA" />
     </div>
     <div id="output">
         Instructions: convert telescript to text then upload here.
