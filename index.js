@@ -2,6 +2,8 @@ function $(sel) {
     return document.querySelector(sel);
 }
 
+const hideComments = $("#hideComments");
+
 const converter = new showdown.Converter();
 const input = $("#input");
 const output = $("#output");
@@ -13,6 +15,10 @@ $("#zoomin").addEventListener("click", () => {
 });
 $("#zoomout").addEventListener("click", () => {
     output.style.zoom = --zoomLevel;
+});
+
+hideComments.addEventListener("change", async (e) => {
+    // TODO
 });
 
 input.addEventListener("change",  async (e) => {
