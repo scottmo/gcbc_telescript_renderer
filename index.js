@@ -24,9 +24,9 @@ hideComments.addEventListener("change", async (e) => {
     const shouldHide = e.target.checked;
     const comments = $$("em");
     if (shouldHide) {
-        comments.forEach(el => elm.classList.add("hidden"));
+        comments.forEach(elm => elm.classList.add("hidden"));
     } else {
-        comments.forEach(el => elm.classList.remove("hidden"));
+        comments.forEach(elm => elm.classList.remove("hidden"));
     }
 });
 
