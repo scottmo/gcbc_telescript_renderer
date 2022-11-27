@@ -8,6 +8,16 @@ function $$(sel) {
 const converter = new showdown.Converter();
 const output = $("#output");
 
+let hidden = false;
+$("#toolbarToggle").addEventListener("click", () => {
+    if (hidden) {
+        $("#toolbar").classList.remove("hidden");
+    } else {
+        $("#toolbar").classList.add("hidden");
+    }
+    hidden = !hidden;
+});
+
 let zoomLevel = 2;
 output.style.zoom = zoomLevel;
 $("#zoomin").addEventListener("click", () => {

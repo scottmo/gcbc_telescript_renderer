@@ -22,14 +22,17 @@
         p {
             margin: 0;
         }
+        #toolbarToggle {
+            position: fixed;
+            top: 0px;
+            right: 0px;
+            z-index: 999;
+        }
         #toolbar {
             background-color: #111;
             position: fixed;
-            top: 5px;
+            top: 0px;
             width: 100%;
-        }
-        #output {
-            margin-top: 3rem;
         }
         .hidden {
             display: none;
@@ -51,6 +54,7 @@
     <script src="./inserts.js"></script>
 </head>
 <body>
+    <button id="toolbarToggle">T</button>
     <div id="toolbar">
         <input id="input" type="file" />
         &nbsp;|&nbsp;
@@ -70,6 +74,7 @@
         <hr/>
     </div>
     <div id="output">
+        <br/><br/>
         Instructions: convert telescript to text then upload here.
     </div>
 
