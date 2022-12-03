@@ -68,7 +68,7 @@ $("#input").addEventListener("change",  async (e) => {
                     return "> --"; // separate verse
                 }
                 return "> " + s;
-            }).join("\n\n"));
+            }).join("\n\n") + "\n\n");
         });
 
         output.innerHTML = converter.makeHtml(text);
