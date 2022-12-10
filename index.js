@@ -18,7 +18,7 @@ $("#toolbarToggle").addEventListener("click", () => {
     hidden = !hidden;
 });
 
-let zoomLevel = 2;
+let zoomLevel = 5;
 output.style.zoom = zoomLevel;
 $("#zoomin").addEventListener("click", () => {
     output.style.zoom = ++zoomLevel;
