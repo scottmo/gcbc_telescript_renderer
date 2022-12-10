@@ -53,11 +53,15 @@ $("#input").addEventListener("change",  async (e) => {
     reader.onload = async (e) => { 
         let text = (e.target.result);
 
+        // make sure single line comments start at new line
+        text = text.replace(/\n([（【])/g, "\n\n$1");
+        text = text.replace(/([）】])\n/g, "$1\n\n");
         // make comments color fade
-        text = text.replaceAll("（", "_（");
-        text = text.replaceAll("）", "）_");
-        text = text.replaceAll("【", "_【");
-        text = text.replaceAll("】", "】_");
+        text = text.replace(/([（【])/g, "_$1");
+        text = text.replace(/([）】])/g, "$1_");
+
+        // make scene title really stands out
+        text = text.replace(/\n(第.+幕：.+)/g, "\n<h2>$1</h2>");
 
         // make character name stands out in beginning of dialogs
         text = text.replace(/\n\s*(.+?)：/g, "\n\n__$1__：");
