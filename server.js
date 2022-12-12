@@ -23,7 +23,7 @@ app.get('/telescript', async (req, res) => {
         const { data } = await axios.get(targetUrl);
     
         telescriptCache[targetUrl] = data;
-        res.send({ status: "SUCCESS", data});
+        res.send({ status: "OK", data});
     } catch(e) {
         res.send({ status: "ERROR", data: "Unable to fetch " + req.query.src + ".\n" + e.message });
     }
