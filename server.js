@@ -16,13 +16,17 @@ io.on('connection', (socket) => {
 
 const telescriptCache = {};
 app.get('/telescript', async (req, res) => {
-    const targetUrl = decodeURIComponent(req.query.src);
-    if (telescriptCache[targetUrl]) return telescriptCache[targetUrl];
-
-    const { data } = await axios.get(targetUrl);
-
-    telescriptCache[targetUrl] = data;
-    res.send(data);
+    try {
+        const targetUrl = decodeURIComponent(req.query.src);
+        if (telescriptCache[targetUrl]) return telescriptCache[targetUrl];
+    
+        const { data } = await axios.get(targetUrl);
+    
+        telescriptCache[targetUrl] = data;
+        res.send({ status: "SUCCESS", data});
+    } catch(e) {
+        res.send({ status: "ERROR", data: "Unable to fetch " + req.query.src + ".\n" + e.message });
+    }
 });
 
 server.listen(port);

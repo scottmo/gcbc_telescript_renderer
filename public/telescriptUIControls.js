@@ -90,8 +90,12 @@ $("#input").addEventListener("change",  async (e) => {
         try {
             new URL(src);
             const res = await fetch("/telescript?src=" + encodeURIComponent(src));
-            const data = await res.text();
-            loadTelescript(data);
+            const { status, data } = await res.json();
+            if (status === "OK") {
+                loadTelescript(data);
+            } else {
+                console.error("Failed to load " + src, data);
+            }
         } catch (e) {
             console.log("invalid src url");
         }
