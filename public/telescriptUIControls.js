@@ -89,7 +89,7 @@ $("#input").addEventListener("change",  async (e) => {
     if (src) {
         try {
             new URL(src);
-            const res = await fetch("/telescript?src=" + src);
+            const res = await fetch("/telescript?src=" + encodeURIComponent(src));
             const data = await res.text();
             loadTelescript(data);
         } catch (e) {
