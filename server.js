@@ -18,12 +18,11 @@ const telescriptCache = {};
 app.get('/telescript', async (req, res) => {
     try {
         const targetUrl = decodeURIComponent(req.query.src);
-        if (telescriptCache[targetUrl]) return telescriptCache[targetUrl];
-    
-        const { data } = await axios.get(targetUrl);
-    
-        telescriptCache[targetUrl] = data;
-        res.send({ status: "OK", data});
+        if (!telescriptCache[targetUrl]) {
+            const { data } = await axios.get(targetUrl);
+            telescriptCache[targetUrl] = data;
+        }
+        res.send({ status: "OK", data: telescriptCache[targetUrl]});
     } catch(e) {
         res.send({ status: "ERROR", data: "Unable to fetch " + req.query.src + ".\n" + e.message });
     }
