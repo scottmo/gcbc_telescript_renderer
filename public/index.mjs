@@ -21,11 +21,16 @@ function zoomIn() {
 function zoomOut() {
     store.zoomLevel--;
 }
+function setOutput(html) {
+    window.requestAnimationFrame(() => {
+        document.querySelector("#output").innerHTML = html;
+    });
+}
 function uploadFile(e) {
     e.preventDefault();
     const reader = new FileReader();
     reader.onload = async (e) => {
-        document.querySelector("#output").innerHTML = processTelescriptToHTML(e.target.result);
+        setOutput(processTelescriptToHTML(e.target.result));
     };
     reader.readAsText(e.target.files[0]);
 }
@@ -88,7 +93,7 @@ async function loadTelescriptFromQueryParam() {
             const res = await fetch("/telescript?src=" + encodeURIComponent(src));
             const { status, data } = await res.json();
             if (status === "OK") {
-                document.querySelector("#output").innerHTML = processTelescriptToHTML(e.target.result);
+                setOutput(processTelescriptToHTML(e.target.result));
             } else {
                 console.error("Failed to load " + src, data);
             }
@@ -110,7 +115,7 @@ function toggleSync() {
 }
 
 function scroll(ypos) {
-    document.querySelector("#output").scrollTo({
+    document.querySelector("#container").scrollTo({
         top: ypos,
         behavior: 'smooth',
     });
@@ -123,7 +128,7 @@ socket.on("scroll", (ypos) => {
 function emitScroll(direction) {
     if (!store.syncScroll) return;
 
-    const newYPos = document.querySelector("#output").scrollTop + (direction * store.scrollStep);
+    const newYPos = document.querySelector("#container").scrollTop + (direction * store.scrollStep);
     scroll(newYPos);
     socket.emit("scroll", newYPos);
 }
@@ -162,7 +167,9 @@ document.body.addEventListener("keydown", throttle((e) => {
 
 // render
 const render = t`
-<div id="output" class="fill" style="${() => "zoom: " + store.zoomLevel}"></div>
+<div id="container" class="fill">
+    <div id="output" style="${() => "zoom: " + store.zoomLevel}"></div>
+</div>
 <div id="scrollListener" class="${() => "fill" + (store.syncScroll ? "" : " hidden")}" @wheel="${triggerScrollWithWheel}">
 </div>
 

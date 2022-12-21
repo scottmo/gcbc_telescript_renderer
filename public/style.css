@@ -12,6 +12,7 @@ body * {
     font-family: "DFKai-SB";
     line-height: 1.2rem;
     font-weight: bold;
+    margin: 0;
 }
 strong {
     color: #fff;
@@ -51,12 +52,13 @@ p {
 }
 
 .fill {
-    height: 100vh;
+    height: 100%;
     width: 100%;
     overflow: scroll;
 }
 .unscrollable {
     overflow: hidden;
+    height: 100vh;
 }
 .button-off {
     background-color: #222;
