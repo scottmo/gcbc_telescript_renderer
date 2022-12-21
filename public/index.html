@@ -5,41 +5,12 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
-    <script src="/inserts.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="module" src="/index.mjs"></script>
     <title>GCBC Telescript</title>
 </head>
 
 <body>
-    <div id="controls">
-        <button id="toolbarToggle">T</button>
-        <button id="scrollDown">Down</button>
-    </div>
-    <div id="toolbar">
-        <input id="input" type="file" />
-        &nbsp;|&nbsp;
-        <b>Zoom</b>
-        <button id="zoomin">+</button>
-        <button id="zoomout">-</button>
-        &nbsp;|&nbsp;
-        <label for="hideComments">Hide Comments</label>
-        <input id="hideComments" type="checkbox" />
-        <br />
-        <label for="backgroundColor">background</label>
-        <input type="color" id='backgroundColor' value="#111" />
-        <label for="foregroundColor">foreground</label>
-        <input type="color" id='foregroundColor' value="#ccb781" />
-        <label for="commentsColor">comments</label>
-        <input type="color" id='commentsColor' value="#AAA" />
-        <hr />
-    </div>
-    <div id="output">
-        <br /><br />
-        Instructions: convert telescript to text then upload here.
-    </div>
-
-    <script src="/telescriptUIControls.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/remoteControls.js"></script>
 </body>
 
 </html>

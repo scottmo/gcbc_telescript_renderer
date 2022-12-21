@@ -49,3 +49,21 @@ p {
     border-radius: 20px;
     border: transparent;
 }
+
+.fill {
+    height: 100vh;
+    width: 100%;
+    overflow: scroll;
+}
+.unscrollable {
+    overflow: hidden;
+}
+.button-off {
+    background-color: #222;
+    color: #555;
+}
+#scrollListener {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
