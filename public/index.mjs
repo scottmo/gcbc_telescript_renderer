@@ -8,11 +8,11 @@ const store = reactive({
     zoomLevel: 5,
     scrollStep: 100,
     syncScroll: true,
-    telescript: "\n\nInstructions: convert telescript to text then upload here.",
 });
 
 const outputEl = $("#output");
-outputEl.attr("style", () => "zoom: " + store.zoomLevel);
+outputEl.attr("style", () => "zoom: " + store.zoomLevel)
+    .text("\n\nInstructions: convert telescript to text then upload here.");
 
 function setOutput(html) {
     outputEl.innerHTML(html);
@@ -60,6 +60,8 @@ function getURLFromQueryParam(urlSearchParams, key) {
     }
 }
 async function get(url) {
+    if (!url) return null;
+
     const res = await fetch(url);
     const { status, data } = await res.json();
     if (status === "OK") {
@@ -73,25 +75,14 @@ async function get(url) {
 async function loadFromQueryParams() {
     // load from server directly if a raw text src is supplied
     const queryParams = new URLSearchParams(location.search);
-    const src = getURLFromQueryParam(queryParams, "src");
-    const inserts = getURLFromQueryParam(queryParams, "inserts");
+    const srcURL = getURLFromQueryParam(queryParams, "src");
+    const subURL = getURLFromQueryParam(queryParams, "sub");
+    const src = await get("/download?src=" + encodeURIComponent(srcURL));
+    const sub = await get("/download?src=" + encodeURIComponent(subURL)) || {};
     if (src) {
-        const telescript = get("/telescript?src=" + encodeURIComponent(src));
-        try {
-            const res = await fetch("/telescript?src=" + encodeURIComponent(src));
-            const { status, data } = await res.json();
-            if (status === "OK") {
-                setOutput(processTelescriptToHTML(data));
-            } else {
-                console.error("Failed to load " + src, data);
-            }
-        } catch (e) {
-            console.log("invalid src url");
-        }
+        setOutput(processTelescriptToHTML(src, JSON.parse(sub)));
     }
 }
-
-
 
 
 const socket = io();

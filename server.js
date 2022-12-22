@@ -14,15 +14,15 @@ io.on('connection', (socket) => {
     });
 });
 
-const telescriptCache = {};
-app.get('/telescript', async (req, res) => {
+const downloadCache = {};
+app.get('/download', async (req, res) => {
     try {
         const targetUrl = decodeURIComponent(req.query.src);
-        if (!telescriptCache[targetUrl]) {
+        if (!downloadCache[targetUrl]) {
             const { data } = await axios.get(targetUrl);
-            telescriptCache[targetUrl] = data;
+            downloadCache[targetUrl] = data;
         }
-        res.send({ status: "OK", data: telescriptCache[targetUrl]});
+        res.send({ status: "OK", data: downloadCache[targetUrl]});
     } catch(e) {
         res.send({ status: "ERROR", data: "Unable to fetch " + req.query.src + ".\n" + e.message });
     }
