@@ -94,7 +94,7 @@ async function loadTelescriptFromQueryParam() {
             const res = await fetch("/telescript?src=" + encodeURIComponent(src));
             const { status, data } = await res.json();
             if (status === "OK") {
-                setOutput(processTelescriptToHTML(e.target.result));
+                setOutput(processTelescriptToHTML(data));
             } else {
                 console.error("Failed to load " + src, data);
             }
