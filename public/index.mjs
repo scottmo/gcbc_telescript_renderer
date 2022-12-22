@@ -22,9 +22,10 @@ function zoomOut() {
     store.zoomLevel--;
 }
 function setOutput(html) {
-    window.requestAnimationFrame(() => {
-        document.querySelector("#output").innerHTML = html;
-    });
+    const output = document.querySelector("#output");
+    output.innerHTML = html;
+    // force reflow
+    console.log(output.offsetHeight);
 }
 function uploadFile(e) {
     e.preventDefault();
@@ -107,8 +108,6 @@ async function loadTelescriptFromQueryParam() {
 
 
 const socket = io();
-
-document.body.classList.add("unscrollable");
 
 function toggleSync() {
     store.syncScroll = !store.syncScroll;
