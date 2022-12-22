@@ -1,4 +1,4 @@
-import { reactive, watch, $ } from './rxdom.js';
+import { reactive, $ } from './rxdom.js';
 import inserts from "./inserts.mjs";
 
 const converter = new showdown.Converter();
@@ -15,7 +15,7 @@ const outputEl = $("#output");
 outputEl.attr("style", () => "zoom: " + store.zoomLevel);
 
 function setOutput(html) {
-    outputEl.element.innerHTML = html;
+    outputEl.innerHTML(html);
     // force reflow
     console.log(output.offsetHeight);
 }

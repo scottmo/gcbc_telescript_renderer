@@ -69,6 +69,22 @@ function $(sel) {
             el.addEventListener.apply(el, args);
             return this;
         },
+        text: function(value) {
+            el.textContent = value;
+            return this;
+        },
+        value: function(value) {
+            el.value = value;
+            return this;
+        },
+        innerHTML: function(html) {
+            el.innerHTML = html;
+            return this;
+        },
+        outerHTML: function(html) {
+            el.outerHTML = html;
+            return this;
+        },
         attr: function(key, value) {
             // get
             if (arguments.length === 1) {
@@ -77,10 +93,18 @@ function $(sel) {
             // set
             if (typeof value === "function") {
                 watch(value, function(computed) {
-                    el.setAttribute(key, computed);
+                    if (computed) {
+                        el.setAttribute(key, computed);
+                    } else {
+                        el.removeAttribute(key);
+                    }
                 });
             } else {
-                el.setAttribute(key, value);
+                if (value) {
+                    el.setAttribute(key, value);
+                } else {
+                    el.removeAttribute(key);
+                }
             }
             return this;
         }
