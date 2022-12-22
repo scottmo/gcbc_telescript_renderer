@@ -1,0 +1,71 @@
+em {
+    color: #AAA;
+}
+blockquote {
+    margin: 0;
+}
+body {
+    background-color: #111;
+    color: #ccb781;
+}
+body * {
+    font-family: "DFKai-SB";
+    line-height: 1.2rem;
+    font-weight: bold;
+    margin: 0;
+}
+strong {
+    color: #fff;
+}
+blockquote {
+    background-color: #222;
+}
+p {
+    margin: 0;
+}
+#controls {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    z-index: 999;
+}
+#toolbar {
+    background-color: #111;
+    position: fixed;
+    top: 0px;
+    width: 100%;
+}
+.hidden {
+    display: none;
+}
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background-color: rgba(155, 155, 155, 0.5);
+    border-radius: 20px;
+    border: transparent;
+}
+
+.fill {
+    height: 100%;
+    width: 100%;
+    overflow: scroll;
+}
+.unscrollable {
+    overflow: hidden;
+    height: 100vh;
+}
+.button-off {
+    background-color: #222;
+    color: #555;
+}
+#scrollListener {
+    position: fixed;
+    top: 0;
+    left: 0;
+}

@@ -1,4 +1,4 @@
-window.inserts = [
+export default [
     {
         key: "－－《祂是》",
         value: `
