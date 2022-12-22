@@ -80,7 +80,7 @@ async function loadFromQueryParams() {
     const src = await get("/download?src=" + encodeURIComponent(srcURL));
     const sub = await get("/download?src=" + encodeURIComponent(subURL)) || {};
     if (src) {
-        setOutput(processTelescriptToHTML(src, JSON.parse(sub)));
+        setOutput(processTelescriptToHTML(src, sub));
     }
 }
 
