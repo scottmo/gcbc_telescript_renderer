@@ -7,14 +7,14 @@ blockquote {
 body {
     background-color: #111;
     color: #ccb781;
+    overflow: hidden;
+    height: 100vh;
+    margin: 0;
 }
 body * {
     font-family: "DFKai-SB";
     line-height: 1.2rem;
     font-weight: bold;
-    margin: 0;
-    overflow: hidden;
-    height: 100vh;
 }
 strong {
     color: #fff;

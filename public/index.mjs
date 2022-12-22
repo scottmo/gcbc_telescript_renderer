@@ -1,9 +1,9 @@
-import { r, t } from 'https://cdn.skypack.dev/@arrow-js/core';
+import { reactive, watch, $ } from './rxdom.js';
 import inserts from "./inserts.mjs";
 
 const converter = new showdown.Converter();
 
-const store = r({
+const store = reactive({
     toolbarClass: "",
     zoomLevel: 5,
     scrollStep: 100,
@@ -11,54 +11,17 @@ const store = r({
     telescript: "\n\nInstructions: convert telescript to text then upload here.",
 });
 
-// handlers
-function toggleToolbar() {
-    store.toolbarClass = store.toolbarClass ? "" : "hidden";
-}
-function zoomIn() {
-    store.zoomLevel++;
-}
-function zoomOut() {
-    store.zoomLevel--;
-}
+const outputEl = $("#output");
+outputEl.attr("style", () => "zoom: " + store.zoomLevel);
+
 function setOutput(html) {
-    const output = document.querySelector("#output");
-    output.innerHTML = html;
+    outputEl.element.innerHTML = html;
     // force reflow
     console.log(output.offsetHeight);
 }
-function uploadFile(e) {
-    e.preventDefault();
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-        setOutput(processTelescriptToHTML(e.target.result));
-    };
-    reader.readAsText(e.target.files[0]);
-}
-async function hideComments(e) {
-    const shouldHide = e.target.checked;
-    const comments = document.querySelectorAll("em");
-    if (shouldHide) {
-        comments.forEach(elm => elm.classList.add("hidden"));
-    } else {
-        comments.forEach(elm => elm.classList.remove("hidden"));
-    }
-}
-function setBackgroundColor(e) {
-    document.body.style.backgroundColor = e.target.value;
-}
-function setForegroundColor(e) {
-    document.body.style.color = e.target.value;
-}
-function setCommentsColor(e) {
-    document.querySelectorAll("em").forEach(elm => elm.style.color = e.target.value);
-}
-function setScrollStep(e) {
-    store.scrollStep = e.target.value;
-}
 
 // helpers
-function processTelescriptToHTML(text) {
+function processTelescriptToHTML(text, replacements) {
     // make sure single line comments start at new line
     text = text.replace(/\n([（【])/g, "\n\n$1");
     text = text.replace(/([）】])\n/g, "$1\n\n");
@@ -72,7 +35,7 @@ function processTelescriptToHTML(text) {
     // make character name stands out in beginning of dialogs
     text = text.replace(/\n\s*(.+?)：/g, "\n\n__$1__：");
 
-    inserts.forEach(({key, value}) => {
+    replacements.forEach(({key, value}) => {
         text = text.replace(key, key + "\n\n" + value.trim().split("\n").map(s => {
             if (s.trim() === "") {
                 return "> --"; // separate verse
@@ -84,13 +47,37 @@ function processTelescriptToHTML(text) {
     return converter.makeHtml(text);
 }
 
-async function loadTelescriptFromQueryParam() {
+function getURLFromQueryParam(urlSearchParams, key) {
+    let value = urlSearchParams.get(key);
+    if (!value) return null;
+
+    try {
+        new URL(value);
+        return value;
+    } catch (e) {
+        console.log("invalid url:", value);
+        return null;
+    }
+}
+async function get(url) {
+    const res = await fetch(url);
+    const { status, data } = await res.json();
+    if (status === "OK") {
+        return data;
+    } else {
+        console.error("Failed to load " + src, data);
+        return null;
+    }
+}
+
+async function loadFromQueryParams() {
     // load from server directly if a raw text src is supplied
     const queryParams = new URLSearchParams(location.search);
-    const src = queryParams.get("src");
+    const src = getURLFromQueryParam(queryParams, "src");
+    const inserts = getURLFromQueryParam(queryParams, "inserts");
     if (src) {
+        const telescript = get("/telescript?src=" + encodeURIComponent(src));
         try {
-            new URL(src);
             const res = await fetch("/telescript?src=" + encodeURIComponent(src));
             const { status, data } = await res.json();
             if (status === "OK") {
@@ -163,41 +150,65 @@ document.body.addEventListener("keydown", throttle((e) => {
     }
 }, 100));
 
+loadFromQueryParams();
 
-// render
-const render = t`
-<div id="container" class="fill">
-    <div id="output" style="${() => "zoom: " + store.zoomLevel}"></div>
-</div>
-<div id="scrollListener" class="${() => "fill" + (store.syncScroll ? "" : " hidden")}" @wheel="${triggerScrollWithWheel}">
-</div>
+$("#scrollListener")
+    .attr("class", () => "fill" + (store.syncScroll ? "" : " hidden"))
+    .on("wheel", triggerScrollWithWheel);
 
-<div id="controls">
-    <button @click="${toggleToolbar}">T</button>
-    <button class="${() => (store.syncScroll ? "" : "button-off")}" @click="${toggleSync}">S</button>
-</div>
-<div id="toolbar" class="${() => store.toolbarClass}">
-    <input id="input" type="file" @change="${uploadFile}" />
-    &nbsp;|&nbsp;
-    <b>Zoom</b>
-    <button id="zoomin" @click="${zoomIn}">+</button>
-    <button id="zoomout" @click="${zoomOut}">-</button>
-    &nbsp;|&nbsp;
-    <label for="hideComments">Hide Comments</label>
-    <input id="hideComments" type="checkbox" @change="${hideComments}"/>
-    &nbsp;|&nbsp;
-    <label for="scrollStep">Scroll Step</label>
-    <input id="scrollStep" type="number" step="10" value="${store.scrollStep}" @change="${setScrollStep}">
-    <br />
-    <label for="backgroundColor">background</label>
-    <input type="color" id='backgroundColor' value="#111" @change="${setBackgroundColor}" />
-    <label for="foregroundColor">foreground</label>
-    <input type="color" id='foregroundColor' value="#ccb781" @change="${setForegroundColor}" />
-    <label for="commentsColor">comments</label>
-    <input type="color" id='commentsColor' value="#AAA" @change="${setCommentsColor}" />
-    <hr />
-</div>
-`;
-render(document.body);
-// after render
-loadTelescriptFromQueryParam();
+$("#toolbar").attr("class", () => store.toolbarClass);
+
+$("#toggleToolbar")
+    .on("click", function toggleToolbar() {
+        store.toolbarClass = store.toolbarClass ? "" : "hidden";
+    });
+$("#toggleSync")
+    .attr("class", () => (store.syncScroll ? "" : "button-off"))
+    .on("click", toggleSync);
+$("#zoomIn")
+    .on("click", function zoomIn() {
+        store.zoomLevel++;
+    });
+$("#zoomOut")
+    .on("click", function zoomOut() {
+        store.zoomLevel--;
+    });
+$("#hideComments")
+    .on("click", async function hideComments(e) {
+        const shouldHide = e.target.checked;
+        const comments = document.querySelectorAll("em");
+        if (shouldHide) {
+            comments.forEach(elm => elm.classList.add("hidden"));
+        } else {
+            comments.forEach(elm => elm.classList.remove("hidden"));
+        }
+    });
+$("#scrollStep")
+    .attr("value", store.scrollStep)
+    .on("change", function setScrollStep(e) {
+        store.scrollStep = e.target.value;
+    });
+
+$("#input")
+    .on("change", function uploadFile(e) {
+        e.preventDefault();
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            setOutput(processTelescriptToHTML(e.target.result, inserts));
+        };
+        reader.readAsText(e.target.files[0]);
+    });
+
+$("#backgroundColor")
+    .on("change", function setBackgroundColor(e) {
+        document.body.style.backgroundColor = e.target.value;
+    });
+$("#foregroundColor")
+    .on("change", function setForegroundColor(e) {
+        document.body.style.color = e.target.value;
+    });
+$("#commentsColor")
+    .on("change", function setCommentsColor(e) {
+        document.querySelectorAll("em").forEach(elm => elm.style.color = e.target.value);
+    });
+
