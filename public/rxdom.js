@@ -70,8 +70,12 @@ function $(sel) {
             return this;
         },
         text: function(value) {
-            el.textContent = value;
-            return this;
+            if (typeof value === "string") {
+                el.textContent = value;
+                return this;
+            } else {
+                return el.textContent;
+            }
         },
         value: function(value) {
             el.value = value;

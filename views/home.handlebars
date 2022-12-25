@@ -1,0 +1,108 @@
+<style>
+body {
+    background-color: #111;
+    color: #ccb781;
+    overflow: hidden;
+    height: 100vh;
+    margin: 0;
+}
+body * {
+    font-family: "DFKai-SB";
+    line-height: 1.2rem;
+    font-weight: bold;
+}
+em {
+    color: #AAA;
+}
+blockquote {
+    margin: 0;
+}
+strong {
+    color: #fff;
+}
+blockquote {
+    background-color: #222;
+}
+p {
+    margin: 0;
+}
+#controls {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    z-index: 999;
+}
+#toolbar {
+    background-color: #111;
+    position: fixed;
+    top: 0px;
+    width: 100%;
+}
+.hidden {
+    display: none;
+}
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background-color: rgba(155, 155, 155, 0.5);
+    border-radius: 20px;
+    border: transparent;
+}
+
+.fill {
+    height: 100%;
+    width: 100%;
+    overflow: scroll;
+}
+.button-off {
+    background-color: #222;
+    color: #555;
+}
+#scrollListener {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+</style>
+
+<div id="container" class="fill">
+    <div id="output">Instructions: convert telescript to text then upload here.</div>
+</div>
+<div id="scrollListener">
+</div>
+
+<div id="controls">
+    <button id="toggleToolbar">T</button>
+    <button id="toggleSync">S</button>
+</div>
+<div id="toolbar">
+    <input id="input" type="file" />
+    &nbsp;|&nbsp;
+    <b>Zoom</b>
+    <button id="zoomIn">+</button>
+    <button id="zoomOut">-</button>
+    &nbsp;|&nbsp;
+    <label for="hideComments">Hide Comments</label>
+    <input id="hideComments" type="checkbox"/>
+    &nbsp;|&nbsp;
+    <label for="scrollStep">Scroll Step</label>
+    <input id="scrollStep" type="number" step="10">
+    <br />
+    <label for="backgroundColor">background</label>
+    <input type="color" id='backgroundColor' value="#111"/>
+    <label for="foregroundColor">foreground</label>
+    <input type="color" id='foregroundColor' value="#ccb781" />
+    <label for="commentsColor">comments</label>
+    <input type="color" id='commentsColor' value="#AAA" />
+    <hr />
+</div>
+<div id="payload" style="display: none">{{payload}}</div>
+
+<script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script type="module" src="/index.mjs"></script>

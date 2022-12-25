@@ -47,43 +47,14 @@ function processTelescriptToHTML(text, replacements) {
     return converter.makeHtml(text);
 }
 
-function getURLFromQueryParam(urlSearchParams, key) {
-    let value = urlSearchParams.get(key);
-    if (!value) return null;
-
-    try {
-        new URL(value);
-        return value;
-    } catch (e) {
-        console.log("invalid url:", value);
-        return null;
-    }
-}
-async function get(url) {
-    if (!url) return null;
-
-    const res = await fetch(url);
-    const { status, data } = await res.json();
-    if (status === "OK") {
-        return data;
-    } else {
-        console.error("Failed to load " + src, data);
-        return null;
-    }
-}
-
-async function loadFromQueryParams() {
-    // load from server directly if a raw text src is supplied
-    const queryParams = new URLSearchParams(location.search);
-    const srcURL = getURLFromQueryParam(queryParams, "src");
-    const subURL = getURLFromQueryParam(queryParams, "sub");
-    const src = await get("/download?src=" + encodeURIComponent(srcURL));
-    const sub = await get("/download?src=" + encodeURIComponent(subURL)) || {};
-    if (src) {
+function loadFromEmbeddedPayload() {
+    const payload = $("#payload");
+    if (payload.text()) {
+        const { src, sub } = JSON.parse(payload.text());
         setOutput(processTelescriptToHTML(src, sub));
+        payload.text("");
     }
 }
-
 
 const socket = io();
 
@@ -141,7 +112,7 @@ document.body.addEventListener("keydown", throttle((e) => {
     }
 }, 100));
 
-loadFromQueryParams();
+loadFromEmbeddedPayload();
 
 $("#scrollListener")
     .attr("class", () => "fill" + (store.syncScroll ? "" : " hidden"))
