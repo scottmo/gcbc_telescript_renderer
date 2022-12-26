@@ -71,7 +71,7 @@ p {
 </style>
 
 <div id="container" class="fill">
-    <div id="output">Instructions: convert telescript to text then upload here.</div>
+    <div id="output"><br/><br/>Instructions: convert telescript to text then upload here.</div>
 </div>
 <div id="scrollListener">
 </div>
@@ -81,7 +81,10 @@ p {
     <button id="toggleSync">S</button>
 </div>
 <div id="toolbar">
-    <input id="input" type="file" />
+    <label for="src">Telescript</label>
+    <input id="src" type="file" />
+    <label for="sub">Dynamic Substitution</label>
+    <input id="sub" type="file" />
     &nbsp;|&nbsp;
     <b>Zoom</b>
     <button id="zoomIn">+</button>

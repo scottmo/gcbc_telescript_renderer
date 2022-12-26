@@ -1,5 +1,4 @@
-import { reactive, $ } from './rxdom.js';
-import inserts from "./inserts.mjs";
+import { reactive, watch, $ } from './rxdom.js';
 
 const converter = new showdown.Converter();
 
@@ -8,35 +7,31 @@ const store = reactive({
     zoomLevel: 5,
     scrollStep: 100,
     syncScroll: true,
+    src: "",
+    sub: ""
 });
 
-const outputEl = $("#output");
-outputEl.attr("style", () => "zoom: " + store.zoomLevel)
-    .text("\n\nInstructions: convert telescript to text then upload here.");
+function renderTelescript() {
+    if (!store.src || !store.sub) return;
 
-function setOutput(html) {
-    outputEl.innerHTML(html);
-    // force reflow
-    console.log(output.offsetHeight);
-}
+    let srcText = store.src;
+    const substitutes = store.sub;
 
-// helpers
-function processTelescriptToHTML(text, replacements) {
     // make sure single line comments start at new line
-    text = text.replace(/\n([（【])/g, "\n\n$1");
-    text = text.replace(/([）】])\n/g, "$1\n\n");
+    srcText = srcText.replace(/\n([（【])/g, "\n\n$1");
+    srcText = srcText.replace(/([）】])\n/g, "$1\n\n");
     // make comments color fade
-    text = text.replace(/([（【])/g, "_$1");
-    text = text.replace(/([）】])/g, "$1_");``
+    srcText = srcText.replace(/([（【])/g, "_$1");
+    srcText = srcText.replace(/([）】])/g, "$1_");``
 
     // make scene title really stands out
-    text = text.replace(/\n(第.+幕：.+)/g, "\n<h2>$1</h2>");
+    srcText = srcText.replace(/\n(第.+幕：.+)/g, "\n<h2>$1</h2>");
 
     // make character name stands out in beginning of dialogs
-    text = text.replace(/\n\s*(.+?)：/g, "\n\n__$1__：");
+    srcText = srcText.replace(/\n\s*(.+?)：/g, "\n\n__$1__：");
 
-    replacements.forEach(({key, value}) => {
-        text = text.replace(key, key + "\n\n" + value.trim().split("\n").map(s => {
+    substitutes.forEach(({key, value}) => {
+        srcText = srcText.replace(key, key + "\n\n" + value.trim().split("\n").map(s => {
             if (s.trim() === "") {
                 return "> --"; // separate verse
             }
@@ -44,15 +39,25 @@ function processTelescriptToHTML(text, replacements) {
         }).join("\n\n") + "\n\n");
     });
 
-    return converter.makeHtml(text);
+    const telescript = converter.makeHtml(srcText);
+    outputEl.innerHTML(telescript);
+    // force reflow
+    console.log(output.offsetHeight);
 }
+watch(store, "src", renderTelescript);
+watch(store, "sub", renderTelescript);
+
+const outputEl = $("#output");
+outputEl.attr("style", () => "zoom: " + store.zoomLevel)
+    .text("\n\nInstructions: convert telescript to text then upload here.");
 
 function loadFromEmbeddedPayload() {
     const payload = $("#payload");
     if (payload.text()) {
         const { src, sub } = JSON.parse(payload.text());
-        setOutput(processTelescriptToHTML(src, sub));
-        payload.text("");
+        store.src = src;
+        store.sub = sub;
+        payload.text("done");
     }
 }
 
@@ -151,12 +156,22 @@ $("#scrollStep")
         store.scrollStep = e.target.value;
     });
 
-$("#input")
+
+$("#src")
     .on("change", function uploadFile(e) {
         e.preventDefault();
         const reader = new FileReader();
-        reader.onload = async (e) => {
-            setOutput(processTelescriptToHTML(e.target.result, inserts));
+        reader.onload = (e) => {
+            store.src = e.target.result;
+        };
+        reader.readAsText(e.target.files[0]);
+    });
+$("#sub")
+    .on("change", function uploadFile(e) {
+        e.preventDefault();
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            store.sub = e.target.result;
         };
         reader.readAsText(e.target.files[0]);
     });

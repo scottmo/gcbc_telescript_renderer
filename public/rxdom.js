@@ -1,19 +1,19 @@
 let lastGets = []; // record gets from proxy
 let recordGets = false; // whether to record gets
-const globalWatchers = new WeakMap(); // watchers for proxy
+const globalWatchers = new Map(); // watchers for proxy
 
 function reactive(obj) {
     const proxy = new Proxy(obj, { 
         get(target, key) {
             if (recordGets) {
-                lastGets.push({ target, key });
+                lastGets.push({ proxy, key });
             }
             return target[key];
         },
         set(target, key, value) {
             target[key] = value;
-            if (globalWatchers.has(target)) {
-                const watchers = globalWatchers.get(target);
+            if (globalWatchers.has(proxy)) {
+                const watchers = globalWatchers.get(proxy);
                 (watchers[key] || []).forEach(watcher => watcher(value));
             }
             return true;
@@ -41,7 +41,9 @@ function watch(proxy, key, fn) {
     if (typeof key !== "string" || typeof fn !== "function") return;
 
     // init watchers map
-    if (!globalWatchers.has(proxy)) globalWatchers.set(proxy, {});
+    if (!globalWatchers.has(proxy)) {
+        globalWatchers.set(proxy, {});
+    }
     const watchers = globalWatchers.get(proxy);
 
     if (!watchers[key]) watchers[key] = [];
@@ -52,8 +54,8 @@ function watch(proxy, key, fn) {
 
 function watchFn(valueFn, fn) {
     const { value, gets } = observeGets(valueFn);
-    gets.forEach(({ target, key }) => {
-        watch(target, key, function() {
+    gets.forEach(({ proxy, key }) => {
+        watch(proxy, key, function() {
             fn(valueFn());
         });
     });
