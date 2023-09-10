@@ -5,10 +5,10 @@ const isDesktop = document.body.offsetWidth > 768;
 const converter = new showdown.Converter();
 
 const store = reactive({
-    toolbarClass: "",
+    toolbarClass: "hidden",
     zoomLevel: 5,
     scrollStep: 100,
-    syncScroll: true,
+    syncScroll: false,
     src: "",
     sub: [],
 });
