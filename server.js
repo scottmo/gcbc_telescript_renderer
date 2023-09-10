@@ -15,6 +15,9 @@ app.use(express.static(__dirname + '/public'));
 
 const fetchCache = {};
 async function fetch(url) {
+    if (!url) {
+        return null;
+    }
     if (!fetchCache[url]) {
         const { data } = await axios.get(url);
         fetchCache[url] = data;
@@ -22,9 +25,19 @@ async function fetch(url) {
     return fetchCache[url];
 }
 
+function getGDriveLink(id) {
+    if (!id) return null;
+
+    return `https://drive.google.com/uc?export=download&id=${id}`;
+}
+
 app.get('/', async (req, res) => {
-    const { src, sub } = req.query;
-    if (src && sub) {
+    let { src, sub, provider } = req.query;
+    if (src) {
+        if (provider === 'gdrive') {
+            src = getGDriveLink(src);
+            sub = getGDriveLink(sub);
+        }
         try {
             const payload = {};
             payload.src = await fetch(src);

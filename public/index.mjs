@@ -8,14 +8,14 @@ const store = reactive({
     scrollStep: 100,
     syncScroll: true,
     src: "",
-    sub: ""
+    sub: [],
 });
 
 function renderTelescript() {
     if (!store.src || !store.sub) return;
 
     let srcText = store.src;
-    const substitutes = store.sub;
+    const substitutes = store.sub || [];
 
     // make sure single line comments start at new line
     srcText = srcText.replace(/\n([（【])/g, "\n\n$1");
