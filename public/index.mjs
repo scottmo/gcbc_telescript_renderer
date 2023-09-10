@@ -1,5 +1,7 @@
 import { reactive, watch, $ } from './rxdom.js';
 
+const isDesktop = document.body.offsetWidth > 768;
+
 const converter = new showdown.Converter();
 
 const store = reactive({
@@ -48,8 +50,10 @@ watch(store, "src", renderTelescript);
 watch(store, "sub", renderTelescript);
 
 const outputEl = $("#output");
-outputEl.attr("style", () => "zoom: " + store.zoomLevel)
-    .text("\n\nInstructions: convert telescript to text then upload here.");
+if (isDesktop) {
+    outputEl.attr("style", () => "zoom: " + store.zoomLevel)
+        .text("\n\nInstructions: convert telescript to text then upload here.");
+}
 
 function loadFromEmbeddedPayload() {
     const payload = $("#payload");
