@@ -6,7 +6,7 @@ const converter = new showdown.Converter();
 
 const store = reactive({
     toolbarClass: "hidden",
-    zoomLevel: 5,
+    zoomLevel: 1,
     scrollStep: 100,
     syncScroll: false,
     src: "",
@@ -19,12 +19,20 @@ function renderTelescript() {
     let srcText = store.src;
     const substitutes = store.sub || [];
 
+    let linebreak = "\n";
+    if (srcText.startsWith("<html>")) {
+        // decode html
+        const srcDoc = (new DOMParser()).parseFromString(srcText, "text/html").documentElement;
+        srcText = srcDoc.outerHTML;
+        linebreak = "<br>";
+    }
+
     // make sure single line comments start at new line
-    srcText = srcText.replace(/\n([（【])/g, "\n\n$1");
-    srcText = srcText.replace(/([）】])\n/g, "$1\n\n");
+    srcText = srcText.replace(/\n([（【])/g, linebreak + linebreak + "$1");
+    srcText = srcText.replace(/([）】])\n/g, "$1" + linebreak + linebreak);
     // make comments color fade
-    srcText = srcText.replace(/([（【])/g, "_$1");
-    srcText = srcText.replace(/([）】])/g, "$1_");``
+    srcText = srcText.replace(/([（【])/g, "<span class='weak'>$1");
+    srcText = srcText.replace(/([）】])/g, "$1</span>");
 
     // make scene title really stands out
     srcText = srcText.replace(/\n(第.+幕：.+)/g, "\n<h2>$1</h2>");

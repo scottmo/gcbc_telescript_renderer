@@ -1,5 +1,7 @@
 const axios = require('axios');
+const unzipper = require('unzipper');
 
+const path = require('path');
 const express = require('express');
 const { engine } = require('express-handlebars');
 const app = express();
@@ -25,22 +27,53 @@ async function fetch(url) {
     return fetchCache[url];
 }
 
+async function fetchZipAndLoadFile(url, targetFileName) {
+    const response = await axios({
+        method: 'get',
+        url,
+        responseType: 'stream' // Important: Treat as stream
+    });
+
+    const directory = response.data.pipe(unzipper.Parse({ forceStream: true }));
+
+    for await (const entry of directory) {
+        const fileName = entry.path;
+        console.log(`Found file: ${fileName}`);
+
+        if (entry.type === 'File' && (!targetFileName || path.basename(fileName) === targetFileName)) {
+            const content = await entry.buffer();
+            return content.toString(); // Return content as a string
+        } else {
+            entry.autodrain(); // Skip unnecessary files
+        }
+    }
+
+    console.log('No file found in the ZIP.');
+    return null;
+}
+
 function getGDriveLink(id) {
     if (!id) return null;
 
     return `https://drive.google.com/uc?export=download&id=${id}`;
 }
 
+function getGDocLink(id, format) {
+    if (!id) return null;
+
+    return `https://docs.google.com/document/export?format=${format || 'txt'}&id=${id}`;
+}
+
 app.get('/', async (req, res) => {
     let { src, sub, provider } = req.query;
     if (src) {
         if (provider === 'gdrive') {
-            src = getGDriveLink(src);
+            src = getGDocLink(src, 'zip');
             sub = getGDriveLink(sub);
         }
         try {
             const payload = {};
-            payload.src = await fetch(src);
+            payload.src = await fetchZipAndLoadFile(src);
             payload.sub = await fetch(sub);
             res.render('home', { payload: JSON.stringify(payload) });
         } catch (e) {
