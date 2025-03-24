@@ -19,26 +19,27 @@ function renderTelescript() {
     let srcText = store.src;
     const substitutes = store.sub || [];
 
-    let linebreak = "\n";
     if (srcText.startsWith("<html>")) {
         // decode html
         const srcDoc = (new DOMParser()).parseFromString(srcText, "text/html").documentElement;
         srcText = srcDoc.outerHTML;
-        linebreak = "<br>";
     }
 
     // make sure single line comments start at new line
-    srcText = srcText.replace(/\n([（【])/g, linebreak + linebreak + "$1");
-    srcText = srcText.replace(/([）】])\n/g, "$1" + linebreak + linebreak);
-    // make comments color fade
-    srcText = srcText.replace(/([（【])/g, "<span class='weak'>$1");
-    srcText = srcText.replace(/([）】])/g, "$1</span>");
+    srcText = srcText.replace(/\n([（【])/g, "<br><br>$1");
+    srcText = srcText.replace(/([）】])\n/g, "$1<br><br>");
+    // make comments color fade, usually stage directions
+    srcText = srcText.replace(/([（(])/g, "<span class='comment'>$1");
+    srcText = srcText.replace(/([）)])/g, "$1</span>");
+    // hide text between 【】 and [], usually directions for other logistics
+    srcText = srcText.replace(/([【\[])/g, "<span class='hidden'>$1");
+    srcText = srcText.replace(/([】\]])/g, "$1</span>");
 
     // make scene title really stands out
-    srcText = srcText.replace(/\n(第.+幕：.+)/g, "\n<h2>$1</h2>");
+    srcText = srcText.replace(/\n(第.+幕[：:].+)/g, "\n<h2>$1</h2>");
 
     // make character name stands out in beginning of dialogs
-    srcText = srcText.replace(/\n\s*(.+?)：/g, "\n\n__$1__：");
+    srcText = srcText.replace(/\n\s*(.+?)[：:]/g, "\n\n<strong>$1</strong>：");
 
     substitutes.forEach(({key, value}) => {
         srcText = srcText.replace(key, key + "\n\n" + value.trim().split("\n").map(s => {
@@ -155,7 +156,7 @@ $("#zoomOut")
 $("#hideComments")
     .on("click", async function hideComments(e) {
         const shouldHide = e.target.checked;
-        const comments = document.querySelectorAll("em");
+        const comments = document.querySelectorAll("span.comment");
         if (shouldHide) {
             comments.forEach(elm => elm.classList.add("hidden"));
         } else {
@@ -188,16 +189,7 @@ $("#sub")
         reader.readAsText(e.target.files[0]);
     });
 
-$("#backgroundColor")
-    .on("change", function setBackgroundColor(e) {
-        document.body.style.backgroundColor = e.target.value;
+$("#invert")
+    .on("click", function invert() {
+        document.body.classList.toggle("invert");
     });
-$("#foregroundColor")
-    .on("change", function setForegroundColor(e) {
-        document.body.style.color = e.target.value;
-    });
-$("#commentsColor")
-    .on("change", function setCommentsColor(e) {
-        document.querySelectorAll("em").forEach(elm => elm.style.color = e.target.value);
-    });
-

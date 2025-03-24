@@ -8,3 +8,7 @@ Sample usage:
 http://localhost:3000/?src=${docId1}&sub=${docId2}&provider=gdrive
 
 For Google Docs, `src` should be a Google Doc. It'll be downloaded as an HTML, so styles will be preserved along with other modifications. `sub` needs to be a JSON file with an array of key/value pairs for custom substitutions. 
+
+By default, it
+- hides text surrounded by 【】[]
+- make text lighter surrounded by （）()

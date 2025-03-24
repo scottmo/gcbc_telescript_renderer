@@ -1,17 +1,19 @@
 <style>
 body {
-    background-color: #000;
     overflow: hidden;
     height: 100vh;
     margin: 0;
-    filter: invert(100%)
 }
 body * {
     font-family: "DFKai-SB", "Arial", "sans-serif" !important;
     line-height: 1.2rem;
     font-weight: bold !important;
 }
-span.weak {
+body.invert {
+    background-color: #000;
+    filter: invert(100%);
+}
+span.comment {
     color: #123456;
 }
 blockquote {
@@ -96,12 +98,7 @@ p {
     <label for="scrollStep">Scroll Step</label>
     <input id="scrollStep" type="number" step="10">
     <br />
-    <label for="backgroundColor">background</label>
-    <input type="color" id='backgroundColor' value="#111"/>
-    <label for="foregroundColor">foreground</label>
-    <input type="color" id='foregroundColor' value="#ccb781" />
-    <label for="commentsColor">comments</label>
-    <input type="color" id='commentsColor' value="#AAA" />
+    <button id="invert">Invert</button>
     <hr />
 </div>
 <div id="payload" style="display: none">{{payload}}</div>
