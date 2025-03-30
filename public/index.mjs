@@ -25,6 +25,15 @@ function renderTelescript() {
         srcText = srcDoc.outerHTML;
     }
 
+    substitutes.forEach(({key, value}) => {
+        srcText = srcText.replace(key, key + "\n\n" + value.trim().split("\n").map(s => {
+            if (s.trim() === "") {
+                return "> --"; // separate verse
+            }
+            return "> " + s;
+        }).join("\n\n") + "\n\n");
+    });
+
     // make sure single line comments start at new line
     srcText = srcText.replace(/\n([（【])/g, "<br><br>$1");
     srcText = srcText.replace(/([）】])\n/g, "$1<br><br>");
@@ -40,15 +49,6 @@ function renderTelescript() {
 
     // make character name stands out in beginning of dialogs
     srcText = srcText.replace(/\n\s*(.+?)[：:]/g, "\n\n<strong>$1</strong>：");
-
-    substitutes.forEach(({key, value}) => {
-        srcText = srcText.replace(key, key + "\n\n" + value.trim().split("\n").map(s => {
-            if (s.trim() === "") {
-                return "> --"; // separate verse
-            }
-            return "> " + s;
-        }).join("\n\n") + "\n\n");
-    });
 
     const telescript = converter.makeHtml(srcText);
     outputEl.innerHTML(telescript);
