@@ -83,7 +83,7 @@ app.get('/', async (req, res) => {
         try {
             const payload = {};
             switch(format) {
-                case 'html':
+                case 'zip':
                     payload.src = await fetchZipAndLoadFile(src);
                     break;
                 case 'md':
