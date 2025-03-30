@@ -83,23 +83,30 @@ p {
     <button id="toggleSync">Sync Scroll</button>
 </div>
 <div id="toolbar">
-    <label for="src">Telescript</label>
-    <input id="src" type="file" />
-    <label for="sub">Dynamic Substitution</label>
-    <input id="sub" type="file" />
-    &nbsp;|&nbsp;
-    <b>Zoom</b>
-    <button id="zoomIn">+</button>
-    <button id="zoomOut">-</button>
-    &nbsp;|&nbsp;
-    <label for="hideComments">Hide Comments</label>
-    <input id="hideComments" type="checkbox"/>
-    &nbsp;|&nbsp;
-    <label for="scrollStep">Scroll Step</label>
-    <input id="scrollStep" type="number" step="10">
-    <br />
-    <button id="invert">Invert</button>
-    <hr />
+    <div>
+        <label for="src">Play Script</label>
+        <input id="src" type="file" />
+    </div>
+    <div>
+        <label for="sub">Dynamic Substitution</label>
+        <input id="sub" type="file" />
+    </div>
+    <div>
+        <b>Zoom</b>
+        <button id="zoomIn">+</button>
+        <button id="zoomOut">-</button>
+    </div>
+    <div>
+        <label for="hideComments">Hide Comments</label>
+        <input id="hideComments" type="checkbox"/>
+    </div>
+    <div>
+        <label for="scrollStep">Scroll Step</label>
+        <input id="scrollStep" type="number" step="10">
+    </div>
+    <div>
+        <button id="invert">Invert</button>
+    </div>
 </div>
 <div id="payload" style="display: none">{{payload}}</div>
 
