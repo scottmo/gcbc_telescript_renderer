@@ -32,7 +32,7 @@ function renderTelescript() {
     srcText = srcText.replace(/([（(])/g, "<span class='comment'>$1");
     srcText = srcText.replace(/([）)])/g, "$1</span>");
     // hide text between 【】 and [], usually directions for other logistics
-    srcText = srcText.replace(/([【\[])/g, "<span class='hidden'>$1");
+    srcText = srcText.replace(/([【\[])/g, "<span class='comment'>$1");
     srcText = srcText.replace(/([】\]])/g, "$1</span>");
 
     // make scene title really stands out
