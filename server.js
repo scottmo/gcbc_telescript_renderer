@@ -65,15 +65,31 @@ function getGDocLink(id, format) {
 }
 
 app.get('/', async (req, res) => {
-    let { src, sub, provider } = req.query;
+    let { src, sub, provider, format } = req.query;
     if (src) {
         if (provider === 'gdrive') {
-            src = getGDocLink(src, 'zip');
+            switch(format) {
+                case 'html':
+                    format = 'zip';
+                    break;
+                case 'md':
+                    break;
+                default:
+                    format = 'txt'
+            }
+            src = getGDocLink(src, format);
             sub = getGDriveLink(sub);
         }
         try {
             const payload = {};
-            payload.src = await fetchZipAndLoadFile(src);
+            switch(format) {
+                case 'html':
+                    payload.src = await fetchZipAndLoadFile(src);
+                    break;
+                case 'md':
+                default:
+                    payload.src = await fetch(src);
+            }
             payload.sub = await fetch(sub);
             res.render('home', { payload: JSON.stringify(payload) });
         } catch (e) {
