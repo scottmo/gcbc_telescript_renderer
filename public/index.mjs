@@ -69,9 +69,11 @@ function renderTelescript() {
         while (parent && !PP_TAGNAMES.includes(parent.tagName)) {
             parent = parent.parentElement;
         }
-        const parentText = parent.textContent;
-        if (openBrackets.includes(parentText[0]) && closeBrackets.includes(parentText[parentText.length - 1])) {
-            parent.classList.add('comment');
+        if (parent) {
+            const parentText = parent.textContent;
+            if (openBrackets.includes(parentText[0]) && closeBrackets.includes(parentText[parentText.length - 1])) {
+                parent.classList.add('comment');
+            }
         }
     });
 }
