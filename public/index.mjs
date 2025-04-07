@@ -13,6 +13,14 @@ const store = reactive({
     sub: [],
 });
 
+const COMMENT_BRACKETS = {
+    "(": ")",
+    "（": "）",
+    "【": "】",
+    "[": "]"
+};
+const PP_TAGNAMES = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
+
 function renderTelescript() {
     if (!store.src || !store.sub) return;
 
@@ -23,6 +31,10 @@ function renderTelescript() {
         // decode html
         const srcDoc = (new DOMParser()).parseFromString(srcText, "text/html").documentElement;
         srcText = srcDoc.outerHTML;
+    } else {
+        // make sure single line comments start at new line
+        srcText = srcText.replace(/\n([（(【\[])/g, "<br><br>$1");
+        srcText = srcText.replace(/([）)】\]])\n/g, "$1<br><br>");
     }
 
     substitutes.forEach(({key, value}) => {
@@ -34,15 +46,9 @@ function renderTelescript() {
         }).join("\n\n") + "\n\n");
     });
 
-    // make sure single line comments start at new line
-    srcText = srcText.replace(/\n([（【])/g, "<br><br>$1");
-    srcText = srcText.replace(/([）】])\n/g, "$1<br><br>");
-    // make comments color fade, usually stage directions
-    srcText = srcText.replace(/([（(])/g, "<span class='comment'>$1");
-    srcText = srcText.replace(/([）)])/g, "$1</span>");
-    // hide text between 【】 and [], usually directions for other logistics
-    srcText = srcText.replace(/([【\[])/g, "<span class='comment'>$1");
-    srcText = srcText.replace(/([】\]])/g, "$1</span>");
+    // mark comment start/end for processing later
+    srcText = srcText.replace(/([（(【\[])/g, "<span class='comment'>$1");
+    srcText = srcText.replace(/([）)】\]])/g, "$1</span>");
 
     // make scene title really stands out
     srcText = srcText.replace(/\n(第.+幕[：:].+)/g, "\n<h2>$1</h2>");
@@ -54,6 +60,22 @@ function renderTelescript() {
     outputEl.innerHTML(telescript);
     // force reflow
     console.log(output.offsetHeight);
+
+    // in case comment is nested in some isolated span, try to check the parent text as well
+    const openBrackets = Object.keys(COMMENT_BRACKETS);
+    const closeBrackets = Object.values(COMMENT_BRACKETS);
+    document.querySelectorAll(".comment").forEach(el => {
+        let parent = el.parentElement;
+        while (parent && !PP_TAGNAMES.includes(parent.tagName)) {
+            parent = parent.parentElement;
+        }
+        if (parent) {
+            const parentText = parent.textContent;
+            if (openBrackets.includes(parentText[0]) && closeBrackets.includes(parentText[parentText.length - 1])) {
+                parent.classList.add('comment');
+            }
+        }
+    });
 }
 watch(store, "src", renderTelescript);
 watch(store, "sub", renderTelescript);
@@ -156,7 +178,7 @@ $("#zoomOut")
 $("#hideComments")
     .on("click", async function hideComments(e) {
         const shouldHide = e.target.checked;
-        const comments = document.querySelectorAll("span.comment");
+        const comments = document.querySelectorAll(".comment");
         if (shouldHide) {
             comments.forEach(elm => elm.classList.add("hidden"));
         } else {
