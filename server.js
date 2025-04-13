@@ -58,14 +58,14 @@ function getGDriveLink(id) {
     return `https://drive.google.com/uc?export=download&id=${id}`;
 }
 
-function getGDocLink(id, format) {
+function getGDocLink(id, tab, format) {
     if (!id) return null;
 
-    return `https://docs.google.com/document/export?format=${format || 'txt'}&id=${id}`;
+    return `https://docs.google.com/document/export?format=${format || 'txt'}&id=${id}&tab=${tab || 't.0'}`;
 }
 
 app.get('/', async (req, res) => {
-    let { src, sub, provider, format } = req.query;
+    let { src, sub, tab, provider, format } = req.query;
     if (src) {
         if (provider === 'gdrive') {
             switch(format) {
@@ -77,7 +77,7 @@ app.get('/', async (req, res) => {
                 default:
                     format = 'txt'
             }
-            src = getGDocLink(src, format);
+            src = getGDocLink(src, tab, format);
             sub = getGDriveLink(sub);
         }
         try {
