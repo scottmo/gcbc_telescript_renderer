@@ -15,7 +15,7 @@ app.set('views', './views');
 
 app.use(express.static(__dirname + '/public'));
 
-const fetchCache = {};
+let fetchCache = {};
 async function fetch(url) {
     if (!url) {
         return null;
@@ -65,7 +65,10 @@ function getGDocLink(id, tab, format) {
 }
 
 app.get('/', async (req, res) => {
-    let { src, sub, tab, provider, format } = req.query;
+    let { src, sub, tab, provider, format, bustCache } = req.query;
+    if (bustCache) {
+        fetchCache = {};
+    }
     if (src) {
         if (provider === 'gdrive') {
             switch(format) {
