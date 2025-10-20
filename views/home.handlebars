@@ -2,6 +2,7 @@
 body {
     overflow: hidden;
     height: 100vh;
+    margin: 20px;
 }
 body * {
     font-family: "DFKai-SB", "Arial", "sans-serif" !important;
@@ -105,6 +106,10 @@ blockquote {
     <div>
         <label for="scrollStep">Scroll Step</label>
         <input id="scrollStep" type="number" step="10">
+    </div>
+    <div>
+        <label for="bodyMargin">Body Margin (px)</label>
+        <input id="bodyMargin" type="number" min="0" max="100" value="0" step="5">
     </div>
     <div>
         <button id="invert">Invert</button>

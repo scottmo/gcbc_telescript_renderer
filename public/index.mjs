@@ -211,6 +211,13 @@ $("#sub")
         reader.readAsText(e.target.files[0]);
     });
 
+$("#bodyMargin")
+    .attr("value", 20)
+    .on("change", (e) => {
+        const margin = e.target.value + 'px';
+        document.body.style.margin = margin;
+    });
+
 $("#invert")
     .on("click", function invert() {
         document.body.classList.toggle("invert");
