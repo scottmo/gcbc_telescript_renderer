@@ -54,7 +54,7 @@ function renderTelescript() {
     srcText = srcText.replace(/\n(第.+幕[：:].+)/g, "\n<h2>$1</h2>");
 
     // make character name stands out in beginning of dialogs
-    srcText = srcText.replace(/\n\s*(.+?)[：:]/g, "\n\n<strong>$1</strong>：");
+    srcText = srcText.replace(/\n\s*([^\s-]+?)[：:]/g, "\n\n<strong>$1</strong>：");
 
     const telescript = converter.makeHtml(srcText);
     outputEl.innerHTML(telescript);
