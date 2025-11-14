@@ -13,11 +13,13 @@ const store = reactive({
     sub: [],
 });
 
-const COMMENT_BRACKETS = {
+const NOTES_BRACKETS = {
     "(": ")",
     "（": "）",
+};
+const COMMENT_BRACKETS = {
     "【": "】",
-    "[": "]"
+    "[": "]",
 };
 const PP_TAGNAMES = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
 
@@ -52,9 +54,11 @@ function renderTelescript() {
         srcText = srcText.replace(key, key + "\n\n" + value + "\n\n");
     });
 
-    // mark comment start/end for processing later
-    srcText = srcText.replace(/([（(【\[])/g, "<span class='comment'>$1");
-    srcText = srcText.replace(/([）)】\]])/g, "$1</span>");
+    // mark start/end of notes and comments for processing later
+    srcText = srcText.replace(/([【\[])/g, "<span class='comment'>$1");
+    srcText = srcText.replace(/([】\]])/g, "$1</span>");
+    srcText = srcText.replace(/([（(])/g, "<span class='notes'>$1");
+    srcText = srcText.replace(/([）)])/g, "$1</span>");
 
     // make scene title really stands out
     srcText = srcText.replace(/\n(第.+幕[：:].+)/g, "\n<h2>$1</h2>");
@@ -67,10 +71,13 @@ function renderTelescript() {
     // force reflow
     console.log(output.offsetHeight);
 
-    // in case comment is nested in some isolated span, try to check the parent text as well
-    const openBrackets = Object.keys(COMMENT_BRACKETS);
-    const closeBrackets = Object.values(COMMENT_BRACKETS);
-    document.querySelectorAll(".comment").forEach(el => {
+    expandBracketsIfNeeded(Object.keys(COMMENT_BRACKETS), Object.values(COMMENT_BRACKETS), "comment");
+    expandBracketsIfNeeded(Object.keys(NOTES_BRACKETS), Object.values(NOTES_BRACKETS), "notes");
+}
+
+// in case brackets are nested in some isolated span, try to check the parent text as well
+function expandBracketsIfNeeded(openBrackets, closeBrackets, className) {
+    document.querySelectorAll("." + className).forEach(el => {
         let parent = el.parentElement;
         while (parent && !PP_TAGNAMES.includes(parent.tagName)) {
             parent = parent.parentElement;
@@ -78,11 +85,13 @@ function renderTelescript() {
         if (parent) {
             const parentText = parent.textContent;
             if (openBrackets.includes(parentText[0]) && closeBrackets.includes(parentText[parentText.length - 1])) {
-                parent.classList.add('comment');
+                parent.classList.add(className);
             }
         }
     });
 }
+
+
 watch(store, "src", renderTelescript);
 watch(store, "sub", renderTelescript);
 
