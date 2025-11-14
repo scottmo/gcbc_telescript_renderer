@@ -38,12 +38,18 @@ function renderTelescript() {
     }
 
     substitutes.forEach(({key, value}) => {
-        srcText = srcText.replace(key, key + "\n\n" + value.trim().split("\n").map(s => {
-            if (s.trim() === "") {
-                return "> --"; // separate verse
-            }
-            return "> " + s;
-        }).join("\n\n") + "\n\n");
+        value = value.trim();
+        if (value.startsWith("<div>") || value.startsWith("<div ")) {
+            value = value.replace(/\n/g, "<br>");
+        } else {
+            value = value.split("\n").map(s => {
+                if (s.trim() === "") {
+                    return "> --";
+                }
+                return "> " + s;
+            }).join("\n\n");
+        }
+        srcText = srcText.replace(key, key + "\n\n" + value + "\n\n");
     });
 
     // mark comment start/end for processing later
