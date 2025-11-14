@@ -104,7 +104,7 @@ function loadFromEmbeddedPayload() {
 
 const socket = io();
 
-function toggleSync() {
+function toggleRemoteScroll() {
     store.syncScroll = !store.syncScroll;
 }
 
@@ -164,9 +164,9 @@ $("#toggleToolbar")
     .on("click", function toggleToolbar() {
         store.toolbarClass = store.toolbarClass ? "" : "hidden";
     });
-$("#toggleSync")
+$("#toggleRemoteScroll")
     .attr("class", () => (store.syncScroll ? "" : "button-off"))
-    .on("click", toggleSync);
+    .on("click", toggleRemoteScroll);
 $("#zoomIn")
     .on("click", function zoomIn() {
         store.zoomLevel++;
