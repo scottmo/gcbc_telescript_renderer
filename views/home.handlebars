@@ -1,19 +1,24 @@
 <style>
 body {
-    overflow: hidden;
-    height: 100vh;
-    margin: 20px;
+    margin: 0;
+    background-color: black;
+    padding: 20px;
 }
 body * {
     font-family: "DFKai-SB", "Arial", "sans-serif" !important;
     font-weight: bold !important;
+    color: white;
 }
 body.invert {
-    background-color: #000;
+    background-color: white;
     filter: invert(100%);
 }
+.container {
+    background-color: #555555;
+    padding: 5px;
+}
 .comment {
-    color: #123456 !important;
+    color: #edcba9 !important;
 }
 blockquote {
     margin: 5px 0 5px 0;
@@ -22,10 +27,10 @@ blockquote {
     margin: 8px 0 8px 0;
 }
 strong {
-    color: red;
+    color: cyan;
 }
 blockquote {
-    background-color: #DDD;
+    background-color: #222222;
 }
 #controls {
     position: fixed;
@@ -34,7 +39,7 @@ blockquote {
     z-index: 999;
 }
 #toolbar {
-    background-color: #EEE;
+    background-color: #111111;
     position: fixed;
     top: 0px;
     width: 100%;
@@ -65,8 +70,8 @@ blockquote {
     overflow: scroll;
 }
 .button-off {
-    background-color: #222;
-    color: #555;
+    background-color: #dddddd;
+    color: #aaaaaa;
 }
 #scrollListener {
     position: fixed;
