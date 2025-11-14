@@ -7,6 +7,8 @@ const { engine } = require('express-handlebars');
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
+const yaml = require('yaml');
+
 const port = process.env.PORT || 3000;
 
 app.engine('handlebars', engine());
@@ -94,6 +96,9 @@ app.get('/', async (req, res) => {
                     payload.src = await fetch(src);
             }
             payload.sub = await fetch(sub);
+            if (typeof payload.sub === 'string' && payload.sub.startsWith("---")) {
+                payload.sub = yaml.parse(payload.sub);
+            }
             res.render('home', { payload: JSON.stringify(payload) });
         } catch (e) {
             console.log(`Unable to load src (${src}) or sub (${sub})`, e);
