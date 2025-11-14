@@ -109,22 +109,23 @@ function toggleSync() {
 }
 
 function scroll(ypos) {
-    document.querySelector("#container").scrollTo({
+    scrollTo({
         top: ypos,
         behavior: 'smooth',
     });
 }
 
-socket.on("scroll", (ypos) => {
-    scroll(ypos);
+socket.on("scroll", (scrollAmount) => {
+    scroll(window.scrollY + scrollAmount);
 });
 
-function emitScroll(direction) {
-    if (!store.syncScroll) return;
+function emitScroll(stepMultiplier) {
+    const scrollAmount = store.scrollStep * stepMultiplier;
+    scroll(window.scrollY + scrollAmount);
 
-    const newYPos = document.querySelector("#container").scrollTop + (direction * store.scrollStep);
-    scroll(newYPos);
-    socket.emit("scroll", newYPos);
+    if (store.syncScroll) {
+        socket.emit("scroll", scrollAmount);
+    }
 }
 
 function throttle(fn, delay) {
@@ -142,27 +143,20 @@ function throttle(fn, delay) {
     }
 }
 
-const triggerScrollWithWheel = throttle((e) => {
-    const direction = e.deltaY > 0 ? 1 : -1;
-    emitScroll(direction);
-}, 100);
+const scrollMultipliers = {
+    'ArrowUp': -1,
+    'ArrowDown': 1,
+    'PageUp': -10,
+    'PageDown': 10,
+};
 document.body.addEventListener("keydown", throttle((e) => {
-    if (e.target != document.body) return;
-    switch (e.keyCode) {
-       case 38: // up
-          emitScroll(-1);
-          break;
-       case 40: // down
-          emitScroll(1);
-          break;
+    if (scrollMultipliers[e.key] !== undefined) {
+        e.preventDefault();
+        emitScroll(scrollMultipliers[e.key]);
     }
 }, 100));
 
 loadFromEmbeddedPayload();
-
-$("#scrollListener")
-    .attr("class", () => "fill" + (store.syncScroll ? "" : " hidden"))
-    .on("wheel", triggerScrollWithWheel);
 
 $("#toolbar").attr("class", () => store.toolbarClass);
 
@@ -217,11 +211,11 @@ $("#sub")
         reader.readAsText(e.target.files[0]);
     });
 
-$("#bodyMargin")
+$("#bodyPadding")
     .attr("value", 20)
     .on("change", (e) => {
-        const margin = e.target.value + 'px';
-        document.body.style.margin = margin;
+        const padding = e.target.value + 'px';
+        document.body.style.padding = padding;
     });
 
 $("#invert")

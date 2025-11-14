@@ -44,6 +44,9 @@ blockquote {
     top: 0px;
     width: 100%;
 }
+button, input {
+    background-color: #43a3f7;
+}
 #output {
     margin: 0;
 }
@@ -63,27 +66,14 @@ blockquote {
     border-radius: 20px;
     border: transparent;
 }
-
-.fill {
-    height: 100%;
-    width: 100%;
-    overflow: scroll;
-}
 .button-off {
     background-color: #dddddd;
     color: #aaaaaa;
 }
-#scrollListener {
-    position: fixed;
-    top: 0;
-    left: 0;
-}
 </style>
 
-<div id="container" class="fill">
+<div id="container">
     <div id="output"><br/><br/>Instructions: convert telescript to text then upload here.</div>
-</div>
-<div id="scrollListener">
 </div>
 
 <div id="controls">
@@ -113,8 +103,8 @@ blockquote {
         <input id="scrollStep" type="number" step="10">
     </div>
     <div>
-        <label for="bodyMargin">Body Margin (px)</label>
-        <input id="bodyMargin" type="number" min="0" max="100" value="0" step="5">
+        <label for="bodyPadding">Body Padding (px)</label>
+        <input id="bodyPadding" type="number" min="0" max="100" value="0" step="5">
     </div>
     <div>
         <button id="invert">Invert</button>
