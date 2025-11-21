@@ -6,7 +6,7 @@ const converter = new showdown.Converter();
 
 const store = reactive({
     toolbarClass: "hidden",
-    zoomLevel: 1,
+    zoomLevel: parseInt(new URLSearchParams(window.location.search).get("zoom")) || 1,
     scrollStep: 100,
     syncScroll: false,
     src: "",
