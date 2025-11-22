@@ -231,3 +231,10 @@ $("#invert")
     .on("click", function invert() {
         document.body.classList.toggle("invert");
     });
+
+$("#bustCache")
+    .on("click", function bustCache() {
+        const url = new URL(window.location.href);
+        url.searchParams.set("bustCache", "1");
+        window.location.href = url.toString();
+    });
