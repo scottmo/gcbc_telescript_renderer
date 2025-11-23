@@ -68,6 +68,26 @@ function renderTelescript() {
 
     const telescript = converter.makeHtml(srcText);
     outputEl.innerHTML(telescript);
+
+    // Generate TOC
+    const headers = document.querySelectorAll("#output h1, #output h2, #output h3, #output h4, #output h5, #output h6");
+    const toolbar = document.getElementById("toolbar");
+    const existingToc = toolbar.querySelector(".toc");
+    if (existingToc) {
+        existingToc.remove();
+    }
+
+    if (headers.length > 0) {
+        let tocHtml = "<div class='toc' style='display: inline-block; margin-left: 10px;'><strong>TOC: </strong><select onchange='location.hash=this.value; this.selectedIndex=0;'><option value=''>Jump to...</option>";
+        headers.forEach((header, index) => {
+            if (!header.id) {
+                header.id = "header-" + index;
+            }
+            tocHtml += `<option value='#${header.id}'>${header.textContent}</option>`;
+        });
+        tocHtml += "</select></div>";
+        toolbar.insertAdjacentHTML("beforeend", tocHtml);
+    }
     // force reflow
     console.log(output.offsetHeight);
 
