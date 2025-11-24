@@ -112,6 +112,18 @@ io.on('connection', (socket) => {
     socket.on('scroll', (data) => {
         socket.broadcast.emit('scroll', data);
     });
+    socket.on('bustCache', () => {
+        socket.broadcast.emit('bustCache');
+    });
+    socket.on('zoom', (data) => {
+        socket.broadcast.emit('zoom', data);
+    });
+    socket.on('toc', (data) => {
+        socket.broadcast.emit('toc', data);
+    });
+    socket.on('toggleComments', (data) => {
+        socket.broadcast.emit('toggleComments', data);
+    });
 });
 
 server.listen(port);

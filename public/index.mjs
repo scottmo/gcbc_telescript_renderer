@@ -8,7 +8,7 @@ const store = reactive({
     toolbarClass: "hidden",
     zoomLevel: parseInt(new URLSearchParams(window.location.search).get("zoom")) || 1,
     scrollStep: 100,
-    syncScroll: false,
+    remoteControl: false,
     src: "",
     sub: [],
 });
@@ -78,7 +78,7 @@ function renderTelescript() {
     }
 
     if (headers.length > 0) {
-        let tocHtml = "<div class='toc' style='display: inline-block; margin-left: 10px;'><strong>TOC: </strong><select onchange='location.hash=this.value; this.selectedIndex=0;'><option value=''>Jump to...</option>";
+        let tocHtml = "<div class='toc' style='display: inline-block; margin-left: 10px;'><strong>TOC: </strong><select id='tocSelect'><option value=''>Jump to...</option>";
         headers.forEach((header, index) => {
             if (!header.id) {
                 header.id = "header-" + index;
@@ -87,6 +87,18 @@ function renderTelescript() {
         });
         tocHtml += "</select></div>";
         toolbar.insertAdjacentHTML("beforeend", tocHtml);
+
+        document.getElementById("tocSelect").addEventListener("change", function (e) {
+            const hash = e.target.value;
+            if (store.remoteControl) {
+                socket.emit("toc", hash);
+                // Reset selection locally to indicate action was sent
+                e.target.selectedIndex = 0;
+            } else {
+                location.hash = hash;
+                e.target.selectedIndex = 0;
+            }
+        });
     }
     // force reflow
     console.log(output.offsetHeight);
@@ -133,8 +145,8 @@ function loadFromEmbeddedPayload() {
 
 const socket = io();
 
-function toggleRemoteScroll() {
-    store.syncScroll = !store.syncScroll;
+function toggleRemoteControl() {
+    store.remoteControl = !store.remoteControl;
 }
 
 function scroll(ypos) {
@@ -148,12 +160,42 @@ socket.on("scroll", (scrollAmount) => {
     scroll(window.scrollY + scrollAmount);
 });
 
+socket.on("bustCache", () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("bustCache", "1");
+    window.location.href = url.toString();
+});
+
+socket.on("zoom", (delta) => {
+    store.zoomLevel += delta;
+});
+
+socket.on("toc", (hash) => {
+    if (hash) {
+        location.hash = hash;
+    }
+});
+
+socket.on("toggleComments", (shouldHide) => {
+    const checkbox = document.getElementById("hideComments");
+    if (checkbox) {
+        checkbox.checked = shouldHide;
+        // Trigger the change event logic manually or extract it
+        const comments = document.querySelectorAll(".comment");
+        if (shouldHide) {
+            comments.forEach(elm => elm.classList.add("hidden"));
+        } else {
+            comments.forEach(elm => elm.classList.remove("hidden"));
+        }
+    }
+});
+
 function emitScroll(stepMultiplier) {
     const scrollAmount = store.scrollStep * stepMultiplier;
-    scroll(window.scrollY + scrollAmount);
-
-    if (store.syncScroll) {
+    if (store.remoteControl) {
         socket.emit("scroll", scrollAmount);
+    } else {
+        scroll(window.scrollY + scrollAmount);
     }
 }
 
@@ -193,25 +235,43 @@ $("#toggleToolbar")
     .on("click", function toggleToolbar() {
         store.toolbarClass = store.toolbarClass ? "" : "hidden";
     });
-$("#toggleRemoteScroll")
-    .attr("class", () => (store.syncScroll ? "" : "button-off"))
-    .on("click", toggleRemoteScroll);
+$("#toggleRemoteControl")
+    .attr("class", () => (store.remoteControl ? "" : "button-off"))
+    .on("click", toggleRemoteControl);
 $("#zoomIn")
     .on("click", function zoomIn() {
-        store.zoomLevel++;
+        if (store.remoteControl) {
+            socket.emit("zoom", 1);
+        } else {
+            store.zoomLevel++;
+        }
     });
 $("#zoomOut")
     .on("click", function zoomOut() {
-        store.zoomLevel--;
+        if (store.remoteControl) {
+            socket.emit("zoom", -1);
+        } else {
+            store.zoomLevel--;
+        }
     });
 $("#hideComments")
     .on("click", async function hideComments(e) {
         const shouldHide = e.target.checked;
-        const comments = document.querySelectorAll(".comment");
-        if (shouldHide) {
-            comments.forEach(elm => elm.classList.add("hidden"));
+        if (store.remoteControl) {
+            socket.emit("toggleComments", shouldHide);
+            // Revert local change to indicate action was sent (optional, but keeps state consistent with 'remote only')
+            // However, for a checkbox, it might be confusing if it doesn't check. 
+            // But the requirement says "run on remote, not current page".
+            // So we should probably prevent default or revert.
+            e.preventDefault();
+            e.target.checked = !shouldHide; // Revert visual state
         } else {
-            comments.forEach(elm => elm.classList.remove("hidden"));
+            const comments = document.querySelectorAll(".comment");
+            if (shouldHide) {
+                comments.forEach(elm => elm.classList.add("hidden"));
+            } else {
+                comments.forEach(elm => elm.classList.remove("hidden"));
+            }
         }
     });
 $("#scrollStep")
@@ -254,7 +314,11 @@ $("#invert")
 
 $("#bustCache")
     .on("click", function bustCache() {
-        const url = new URL(window.location.href);
-        url.searchParams.set("bustCache", "1");
-        window.location.href = url.toString();
+        if (store.remoteControl) {
+            socket.emit("bustCache");
+        } else {
+            const url = new URL(window.location.href);
+            url.searchParams.set("bustCache", "1");
+            window.location.href = url.toString();
+        }
     });
