@@ -176,18 +176,8 @@ socket.on("toc", (hash) => {
     }
 });
 
-socket.on("toggleComments", (shouldHide) => {
-    const checkbox = document.getElementById("hideComments");
-    if (checkbox) {
-        checkbox.checked = shouldHide;
-        // Trigger the change event logic manually or extract it
-        const comments = document.querySelectorAll(".comment");
-        if (shouldHide) {
-            comments.forEach(elm => elm.classList.add("hidden"));
-        } else {
-            comments.forEach(elm => elm.classList.remove("hidden"));
-        }
-    }
+socket.on("toggleComments", () => {
+    toggleComments();
 });
 
 function emitScroll(stepMultiplier) {
@@ -212,6 +202,11 @@ function throttle(fn, delay) {
             time = Date.now();
         }
     }
+}
+
+function toggleComments() {
+    const comments = document.querySelectorAll(".comment");
+    comments.forEach(elm => elm.classList.toggle("hidden"));
 }
 
 const scrollMultipliers = {
@@ -254,28 +249,16 @@ $("#zoomOut")
             store.zoomLevel--;
         }
     });
+
 $("#hideComments")
     .on("click", async function hideComments(e) {
-        // Let's check the first comment's state.
-        const firstComment = document.querySelector(".comment");
-        let currentlyHidden = false;
-        if (firstComment) {
-            currentlyHidden = firstComment.classList.contains("hidden");
-        }
-
-        const shouldHide = !currentlyHidden;
-
         if (store.remoteControl) {
-            socket.emit("toggleComments", shouldHide);
+            socket.emit("toggleComments");
         } else {
-            const comments = document.querySelectorAll(".comment");
-            if (shouldHide) {
-                comments.forEach(elm => elm.classList.add("hidden"));
-            } else {
-                comments.forEach(elm => elm.classList.remove("hidden"));
-            }
+            toggleComments();
         }
     });
+
 $("#scrollStep")
     .attr("value", store.scrollStep)
     .on("change", function setScrollStep(e) {
