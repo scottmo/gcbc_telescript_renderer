@@ -78,7 +78,7 @@ function renderTelescript() {
     }
 
     if (headers.length > 0) {
-        let tocHtml = "<div class='toc' style='display: inline-block; margin-left: 10px;'><strong>TOC: </strong><select id='tocSelect'><option value=''>Jump to...</option>";
+        let tocHtml = "<div class='toc'><label>Headers</label><select id='tocSelect'><option value=''>Jump to...</option>";
         headers.forEach((header, index) => {
             if (!header.id) {
                 header.id = "header-" + index;
@@ -256,15 +256,17 @@ $("#zoomOut")
     });
 $("#hideComments")
     .on("click", async function hideComments(e) {
-        const shouldHide = e.target.checked;
+        // Let's check the first comment's state.
+        const firstComment = document.querySelector(".comment");
+        let currentlyHidden = false;
+        if (firstComment) {
+            currentlyHidden = firstComment.classList.contains("hidden");
+        }
+
+        const shouldHide = !currentlyHidden;
+
         if (store.remoteControl) {
             socket.emit("toggleComments", shouldHide);
-            // Revert local change to indicate action was sent (optional, but keeps state consistent with 'remote only')
-            // However, for a checkbox, it might be confusing if it doesn't check. 
-            // But the requirement says "run on remote, not current page".
-            // So we should probably prevent default or revert.
-            e.preventDefault();
-            e.target.checked = !shouldHide; // Revert visual state
         } else {
             const comments = document.querySelectorAll(".comment");
             if (shouldHide) {
