@@ -51,8 +51,11 @@ strong {
     top: 0px;
     width: 100%;
 }
-button, input {
+button {
     background-color: #43a3f7;
+}
+input {
+    background-color: #ffffff;
 }
 #output {
     margin: 0;
@@ -85,11 +88,11 @@ button, input {
 
 <div id="controls">
     <button id="toggleToolbar">Toolbar</button>
-    <button id="toggleRemoteControl">Remote Control</button>
+    <button id="toggleRemoteControl">Remote</button>
 </div>
 <div id="toolbar">
     <div>
-        <span style="color: #aaa; font-size: 0.8em; margin-left: 10px;">
+        <span style="color: #aaa;">
             Notes: "Remote Control" is allowed for Zoom, Scroll, TOC, Toggle Comments, Bust Cache
         </span>
         </div>
@@ -100,25 +103,19 @@ button, input {
         <input id="sub" type="file" />
     </div>
     <div>
+        <label for="scrollStep">Scroll Step</label>
+        <input id="scrollStep" type="number" step="10">
+        <label for="bodyPadding">Body Padding (px)</label>
+        <input id="bodyPadding" type="number" min="0" max="100" value="0" step="5">
+    </div>
+    <div>
         <b>Zoom</b>
         <button id="zoomIn">+</button>
         <button id="zoomOut">-</button>
     </div>
     <div>
         <button id="hideComments">Toggle Comments</button>
-    </div>
-    <div>
-        <label for="scrollStep">Scroll Step</label>
-        <input id="scrollStep" type="number" step="10">
-    </div>
-    <div>
-        <label for="bodyPadding">Body Padding (px)</label>
-        <input id="bodyPadding" type="number" min="0" max="100" value="0" step="5">
-    </div>
-    <div>
         <button id="invert">Invert</button>
-    </div>
-    <div>
         <button id="bustCache">Bust Cache</button>
     </div>
 </div>
